@@ -1,0 +1,107 @@
+create database fissqlassignment3
+
+use Assignment3
+
+create table tblDept
+(
+DeptNo int primary key,DName varchar(30),Loc varchar(30)
+)
+
+create table tblEmp
+(  
+EmpNo int Primary Key,
+EName varchar(30),
+Job varchar(30),
+   MgrId int,
+   HireDate Date,
+   Salary float,
+   Comm int,
+   DeptNo int references tblDept(DeptNo)
+)
+
+select EmpNo, EName, Job, MgrId, Format(HireDate,'dd-MMM-yy'), Salary, Comm, DeptNo from tblEmp;
+
+select * from tblDept;
+
+insert into tblDept Values(10,'ACCOUNTING','NEW YORK'),
+(20,'RESEARCH','DALLAS'),
+(30,'SALES','CHICAGO'),
+(40,'OPERATIONS','BOSTON')
+
+Insert into tblEmp Values(7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20),
+(7499,'ALLEN','SALESMAN',7698,'1981-02-20',1600,300,30),
+(7521,'WARD','SALESMAN',7698,'1981-02-22',1250,500,30),
+(7566,'JONES','MANAGER',7839,'1981-04-02',2975, null,20),
+(7654,'MARTIN','SALESMAN',7698,'1981-09-28',1250,1400,30),
+(7698,'BLAKE','MANAGER',7839,'1981-05-01',2850,null,30),
+(7782,'CLARK','MANAGER',7839,'1981-06-09',2450,null,10),
+(7788,'SCOTT','ANALYST',7566,'1987-04-19',3000,null,20),
+(7839,'KING','PRESIDENT',null,'1981-11-17',5000,null,10),
+(7844,'TURNER','SALESMAN',7698,'1981-09-08',1500,0,30),
+(7876,'ADAMS','CLERK',7788,'1987-05-23',1100,null,20),
+(7900,'JAMES','CLERK',7698,'1981-12-03',950,null,30),
+(7902,'FORD','ANALYST',7566,'1981-12-03',3000,null,20),
+(7934,'MILLER','CLERK',7782,'1982-01-23',1300,null,10)
+
+
+select distinct(mgr.EName) as 'Manager'
+from tblEmp emp join tblEmp mgr on emp.MgrId = mgr.EmpNo
+
+select EName, Salary from tblEmp where Salary > 1000
+
+select EName, Salary from tblEmp where EName != 'James'
+
+select * from tblEmp where EName like 'S%'
+
+select * from tblEmp where EName like '%A%'
+
+select * from tblEmp where EName like '__L%'
+
+select EName, (Salary/30) as 'Daily Salary' from tblEmp
+where EName = 'Jones'
+
+select SUM(Salary) as 'Total Monthly Salary' from tblEmp
+
+select AVG(Salary*12) as 'Average Annual Salary' from tblEmp
+
+select e.EmpNo, e.EName, e.Job, e.Salary, e.DeptNo from tblEmp e
+except (select empNo, EName, Job, Salary, DeptNo from tblEmp 
+where DeptNo = 30 and Job = 'Salesman') 
+  
+select distinct(e.DeptNo), d.DName from tblEmp e join tblDept d
+on e.DeptNo = d.DeptNo
+
+select EName as 'Employee', Salary as 'Monthly Salary', DeptNo
+from tblEmp
+where Salary > 1500 and DeptNo in (10,30)
+
+select EName, Job, Salary from tblEmp
+where Job in ('Manager', 'Analyst') and Salary not in (1000,3000,5000)
+
+select EName, Salary, Comm from tblEmp
+where Comm > (Salary + (Salary * 10/100))
+
+select * from tblEmp
+where EName like '%L%l%' and DeptNo=30 or MgrId=7782
+
+
+select EName, DateDiff(Year,DateName(YEAR,HireDate),DateName(YEAR,GETDATE())) as Experience
+from tblEmp
+where DateDiff(Year,DateName(YEAR,HireDate),DateName(YEAR,GETDATE()))  >10 and
+DateDiff(Year,DateName(YEAR,HireDate),DateName(YEAR,GETDATE())) < 20
+	   
+select eName, year(getdate())-year(hiredate) from tblEmp
+where year(getdate())-year(hiredate)>10 and
+year(getdate())-year(hiredate)<20
+
+select d.DeptNo, d.DName, e.EName from tblDept d, tblEmp e
+where d.DeptNo = e.DeptNo
+order by d.DName, e.EName desc
+
+
+select EName, DateDiff(Year,DateName(YEAR,HireDate),DateName(YEAR,GETDATE())) as Experience
+from tblEmp
+where EName='Miller'
+   
+select eName, year(getdate())-year(hiredate) from tblEmp
+where ename='Miller'
